@@ -9,51 +9,21 @@ const morgan = require('morgan')
 morgan.token('body', (req) => JSON.stringify(req.body))
 app.use(morgan(':method :url :status :res[content-length] - :response-time ms :body'))
 
-// let persons = [
-//     {
-//         "id": "1",
-//         "name": "Arto Hellas",
-//         "number": "040-123456"
-//     },
-//     {
-//         "id": "2",
-//         "name": "Ada Lovelace",
-//         "number": "39-44-5323523"
-//     },
-//     {
-//         "id": "3",
-//         "name": "Dan Abramov",
-//         "number": "12-43-234345"
-//     },
-//     {
-//         "id": "4",
-//         "name": "Mary Poppendieck",
-//         "number": "39-23-6423122"
-//     }
-// ]
-
-// const generateId = () => {
-//     const maxId = persons.length > 0
-//         ? Math.max(...persons.map(n => Number(n.id)))
-//         : 0
-//     return String(maxId + 1)
-// }
-
-app.get('api/info', (req, res) => {
-    Person.find({}).then(people => {
-        res.json(people)
-    })
-    const now = new Date();
-    const count = people.length;
-    const infotext = `
-        <html lang="en">
-            <body>
-                <p>Phonebook has info for ${count} people</p><br /><p>${now}</p>
-            </body>
-        </html>
-    `;
-    res.send(infotext);
-})
+// app.get('api/info', (req, res) => {
+//     Person.find({}).then(people => {
+//         res.json(people)
+//     })
+//     const now = new Date();
+//     const count = people.length;
+//     const infotext = `
+//         <html lang="en">
+//             <body>
+//                 <p>Phonebook has info for ${count} people</p><br /><p>${now}</p>
+//             </body>
+//         </html>
+//     `;
+//     res.send(infotext);
+// })
 
 app.get('/api/people/', (req, res) => {
     Person.find({}).then(people => {
@@ -92,10 +62,10 @@ app.post('/api/people', (request, response) => {
 //     response.status(204).end()
 // })
 
-const unknownEndpoint = (request, response) => {
-    response.status(404).send({ error: 'unknown endpoint' })
-}
-app.use(unknownEndpoint)
+// const unknownEndpoint = (request, response) => {
+//     response.status(404).send({ error: 'unknown endpoint' })
+// }
+// app.use(unknownEndpoint)
 
 const PORT = process.env.PORT
 app.listen(PORT, () => {
