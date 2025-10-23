@@ -1,6 +1,6 @@
 require('dotenv').config()
 const express = require('express')
-const person = require('./models/person')
+const Person = require('./models/person')
 const app = express()
 app.use(express.static('dist'))
 app.use(express.json())
@@ -48,7 +48,7 @@ app.get('api/info', (req, res) => {
     const infotext = `
         <html lang="en">
             <body>
-                <p>Phonebook ha info for ${count} people</p><br /><p>${now}</p>
+                <p>Phonebook has info for ${count} people</p><br /><p>${now}</p>
             </body>
         </html>
     `;
