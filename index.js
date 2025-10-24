@@ -9,7 +9,7 @@ const morgan = require('morgan')
 morgan.token('body', (req) => JSON.stringify(req.body))
 app.use(morgan(':method :url :status :res[content-length] - :response-time ms :body'))
 
-app.get('api/info', (req, res) => {
+app.get('/api/info', (req, res) => {
     const people = Person.find({}).then(people => {
         res.json(people)
     })
@@ -31,7 +31,7 @@ app.get('/api/people/', (req, res) => {
     })
 })
 
-app.get('/api/people/:id', (request, response) => {
+app.get('/api/people/:id', (request, response, next) => {
     Person.findById(request.params.id)
           .then(person => {
               if (person) {
@@ -43,7 +43,7 @@ app.get('/api/people/:id', (request, response) => {
           .catch(error => next(error))
 })
 
-app.post('/api/people', (request, response) => {
+app.post('/api/people', (request, response, next) => {
     const body = request.body
     if (!body.name || !body.number) {
         return response.status(400).json({error: 'name and number is required'})
@@ -61,7 +61,7 @@ app.post('/api/people', (request, response) => {
     })
 })
 
-app.put('/api/people/:id', (request, response) => {
+app.put('/api/people/:id', (request, response, next) => {
     const {name, number} = request.body
     Person.findById(request.params.id)
         .then(person => {
@@ -77,7 +77,7 @@ app.put('/api/people/:id', (request, response) => {
         .catch(error => next(error))
 })
 
-app.delete('/api/persons/:id', (request, response) => {
+app.delete('/api/people/:id', (request, response, next) => {
     Person.findByIdAndDelete(request.params.id)
           .then(result => {
               response.status(204).end()

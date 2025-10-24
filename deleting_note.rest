@@ -1,14 +1,14 @@
-GET http://localhost:3001/api/persons
+GET http://127.0.0.1:3001/api/people
 ###
 
-@id = ObjectId('68f765b36b53fbe74af18be1')
-DELETE http://localhost:3001/api/persons/{{id}}
+@id = 68f765b36b53fbe74af18be1
+DELETE http://127.0.0.1:3001/api/people/{{id}}
 ###
 
-POST http://localhost:3001/api/persons
+POST http://127.0.0.1:3001/api/people
 content-type: application/json
 
 {
-  "name": "Arto Hellas",
-  "number": "208834058"
+  "name": "Vera Hustles",
+  "number": "2024-208834058"
 }
