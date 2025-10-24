@@ -1,7 +1,7 @@
 GET http://localhost:3001/api/persons
 ###
 
-@id = '4'
+@id = ObjectId('68f765b36b53fbe74af18be1')
 DELETE http://localhost:3001/api/persons/{{id}}
 ###
 
