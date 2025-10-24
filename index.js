@@ -44,37 +44,46 @@ app.get('/api/people/:id', (request, response, next) => {
 })
 
 app.post('/api/people', (request, response, next) => {
-    const body = request.body
-    if (!body.name || !body.number) {
+    const {name, number} = request.body || {}
+    if (!name || !number) {
         return response.status(400).json({error: 'name and number is required'})
     }
-    // if (persons.some(person => person.name === body.name) ) {
-    //     return response.status(400).json({ error: 'name is already in use' })
-    // }
-    const person = new Person({
-        name: body.name,
-        number: body.number || ''
-    })
 
-    person.save().then(savedPerson => {
-        response.json(savedPerson)
-    })
+    Person.findOne({name})
+          .then(person => {
+              if (person) {
+                  return Person.findByIdAndUpdate(
+                      person._id,
+                      {number},
+                      { new: true, runValidators: true, context: 'query' }
+                  ).then(updatedPerson => {
+                      response.status(200).json(updatedPerson)
+                  })
+              } else {
+                  const newPerson = new Person({name, number})
+                  newPerson.save().then(savedPerson => {
+                      response.status(201).json(savedPerson)
+                  })
+              }
+          })
+          .catch(error => next(error))
 })
+
 
 app.put('/api/people/:id', (request, response, next) => {
     const {name, number} = request.body
     Person.findById(request.params.id)
-        .then(person => {
-            if (!person) {
-                return response.status(404).end()
-            }
-            person.name = name
-            person.number = number
-            person.save().then(updatedPerson => {
-                response.json(updatedPerson)
-            })
-        })
-        .catch(error => next(error))
+          .then(person => {
+              if (!person) {
+                  return response.status(404).end()
+              }
+              person.name = name
+              person.number = number
+              person.save().then(updatedPerson => {
+                  response.json(updatedPerson)
+              })
+          })
+          .catch(error => next(error))
 })
 
 app.delete('/api/people/:id', (request, response, next) => {
