@@ -44,31 +44,20 @@ app.get('/api/people/:id', (request, response, next) => {
 })
 
 app.post('/api/people', (request, response, next) => {
-    const {name, number} = request.body || {}
-    if (!name || !number) {
-        return response.status(400).json({error: 'name and number is required'})
+    const {name, number} = request.body
+    if (!name) {
+        return response.status(400).json({error: 'name is required'})
     }
-
-    Person.findOne({name})
-          .then(person => {
-              if (person) {
-                  return Person.findByIdAndUpdate(
-                      person._id,
-                      {number},
-                      { new: true, runValidators: true, context: 'query' }
-                  ).then(updatedPerson => {
-                      response.status(200).json(updatedPerson)
-                  })
-              } else {
-                  const newPerson = new Person({name, number})
-                  newPerson.save().then(savedPerson => {
-                      response.status(201).json(savedPerson)
-                  })
-              }
-          })
-          .catch(error => next(error))
+    const newPerson = new Person({
+        name: name,
+        number: number || ''
+    })
+    newPerson.save()
+             .then(savedPerson => {
+                 response.json(savedPerson)
+             })
+             .catch(error => next(error))
 })
-
 
 app.put('/api/people/:id', (request, response, next) => {
     const {name, number} = request.body
