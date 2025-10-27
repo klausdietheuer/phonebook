@@ -60,20 +60,27 @@ app.post('/api/people', (request, response, next) => {
 })
 
 app.put('/api/people/:id', (request, response, next) => {
-    const {name, number} = request.body
+    const { name, number } = request.body
+
     Person.findById(request.params.id)
           .then(person => {
               if (!person) {
                   return response.status(404).end()
               }
+
               person.name = name
               person.number = number
-              person.save().then(updatedPerson => {
+
+              return person.save()
+          })
+          .then(updatedPerson => {
+              if (updatedPerson) {
                   response.json(updatedPerson)
-              })
+              }
           })
           .catch(error => next(error))
 })
+
 
 app.delete('/api/people/:id', (request, response, next) => {
     Person.findByIdAndDelete(request.params.id)
@@ -89,16 +96,19 @@ const unknownEndpoint = (request, response) => {
 app.use(unknownEndpoint)
 
 const errorHandler = (error, request, response, next) => {
-    console.error(error.message)
+    console.error(error.name, error.message)
+
     if (error.name === 'CastError') {
-        return response.status(400).send({error: 'malformatted id'})
-    }
-    if (error.name === 'ValidationError') {
-        return response.status(400).json({error: error.message})
+        return response.status(400).send({ error: 'malformatted id' })
     }
 
-    next(error)
+    if (error.name === 'ValidationError') {
+        return response.status(400).json({ error: error.message })
+    }
+
+    return response.status(500).json({ error: 'Internal Server Error', message: error.message })
 }
+
 app.use(errorHandler)
 
 const PORT = process.env.PORT || 3001
