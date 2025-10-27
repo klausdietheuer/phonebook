@@ -45,9 +45,6 @@ app.get('/api/people/:id', (request, response, next) => {
 
 app.post('/api/people', (request, response, next) => {
     const {name, number} = request.body
-    if (!name) {
-        return response.status(400).json({error: 'name is required'})
-    }
     const newPerson = new Person({
         name: name,
         number: number || ''
@@ -80,9 +77,7 @@ app.delete('/api/people/:id', (request, response, next) => {
           .then(result => {
               response.status(204).end()
           })
-          .catch(error => {
-              next(error)
-          })
+          .catch(error => {next(error)})
 })
 
 const unknownEndpoint = (request, response) => {
@@ -94,6 +89,9 @@ const errorHandler = (error, request, response, next) => {
     console.error(error.message)
     if (error.name === 'CastError') {
         return response.status(400).send({error: 'malformatted id'})
+    }
+    if (error.name === 'ValidationError') {
+        return response.status(400).json({error: error.message})
     }
 
     next(error)
