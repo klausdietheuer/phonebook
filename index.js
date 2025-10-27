@@ -9,20 +9,23 @@ const morgan = require('morgan')
 morgan.token('body', (req) => JSON.stringify(req.body))
 app.use(morgan(':method :url :status :res[content-length] - :response-time ms :body'))
 
-app.get('/api/info', (req, res) => {
-    const people = Person.find({}).then(people => {
-        res.json(people)
-    })
-    const now = new Date();
-    const count = people.length;
-    const infotext = `
+app.get('/api/info', (req, res, next) => {
+    Person.find({})
+          .then(people => {
+              const now = new Date()
+              const count = people.length
+
+              const infotext = `
         <html lang="en">
-            <body>
-                <p>Phonebook has info for ${count} people</p><br /><p>${now}</p>
-            </body>
+          <body>
+            <p>Phonebook has info for ${count} people</p>
+            <p>${now}</p>
+          </body>
         </html>
-    `;
-    res.send(infotext);
+      `
+              res.send(infotext)
+          })
+          .catch(error => next(error))
 })
 
 app.get('/api/people/', (req, res) => {
