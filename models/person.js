@@ -20,7 +20,6 @@ const personSchema = new mongoose.Schema({
     },
     number: {
         type: String,
-        required: [true, 'Nummer ist erforderlich.'],
         validate: {
             validator: function (v) {
                 // 🔹 Muster:
@@ -30,7 +29,8 @@ const personSchema = new mongoose.Schema({
             message: props =>
                 `${props.value} ist keine gültige Telefonnummer! Format: XX-XXXXXXX oder XXX-XXXXXXXX`,
         },
-    },
+        required: [true, 'Nummer ist erforderlich.']
+    }
 })
 
 personSchema.set('toJSON', {

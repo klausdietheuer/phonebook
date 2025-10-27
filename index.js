@@ -80,7 +80,7 @@ app.delete('/api/people/:id', (request, response, next) => {
           .then(result => {
               response.status(204).end()
           })
-          .catch(error => {next(error)})
+          .catch(error => next(error))
 })
 
 const unknownEndpoint = (request, response) => {
