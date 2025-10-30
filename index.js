@@ -10,12 +10,13 @@ morgan.token('body', (req) => JSON.stringify(req.body))
 app.use(morgan(':method :url :status :res[content-length] - :response-time ms :body'))
 
 app.get('/api/info', (req, res, next) => {
-    Person.find({})
-          .then(people => {
-              const now = new Date()
-              const count = people.length
+    Person
+        .find({})
+        .then(people => {
+            const now = new Date()
+            const count = people.length
 
-              const infotext = `
+            const infotext = `
         <html lang="en">
           <body>
             <p>Phonebook has info for ${count} people</p>
@@ -23,9 +24,9 @@ app.get('/api/info', (req, res, next) => {
           </body>
         </html>
       `
-              res.send(infotext)
-          })
-          .catch(error => next(error))
+            res.send(infotext)
+        })
+        .catch(error => next(error))
 })
 
 app.get('/api/people/', (req, res) => {
@@ -35,67 +36,71 @@ app.get('/api/people/', (req, res) => {
 })
 
 app.get('/api/people/:id', (request, response, next) => {
-    Person.findById(request.params.id)
-          .then(person => {
-              if (person) {
-                  response.json(person)
-              } else {
-                  response.status(404).end()
-              }
-          })
-          .catch(error => next(error))
+    Person
+        .findById(request.params.id)
+        .then(person => {
+            if (person) {
+                response.json(person)
+            } else {
+                response.status(404).end()
+            }
+        })
+        .catch(error => next(error))
 })
 
 app.post('/api/people', (request, response, next) => {
-    const {name, number} = request.body
+    const { name, number } = request.body
     const newPerson = new Person({
         name: name,
         number: number || ''
     })
-    newPerson.save()
-             .then(savedPerson => {
-                 response.json(savedPerson)
-             })
-             .catch(error => next(error))
+    newPerson
+        .save()
+        .then(savedPerson => {
+            response.json(savedPerson)
+        })
+        .catch(error => next(error))
 })
 
 app.put('/api/people/:id', (request, response, next) => {
     const { name, number } = request.body
 
-    Person.findById(request.params.id)
-          .then(person => {
-              if (!person) {
-                  return response.status(404).end()
-              }
+    Person
+        .findById(request.params.id)
+        .then(person => {
+            if (!person) {
+                return response.status(404).end()
+            }
 
-              person.name = name
-              person.number = number
+            person.name = name
+            person.number = number
 
-              return person.save()
-          })
-          .then(updatedPerson => {
-              if (updatedPerson) {
-                  response.json(updatedPerson)
-              }
-          })
-          .catch(error => next(error))
+            return person.save()
+        })
+        .then(updatedPerson => {
+            if (updatedPerson) {
+                response.json(updatedPerson)
+            }
+        })
+        .catch(error => next(error))
 })
 
 
 app.delete('/api/people/:id', (request, response, next) => {
-    Person.findByIdAndDelete(request.params.id)
-          .then(result => {
-              response.status(204).end()
-          })
-          .catch(error => next(error))
+    Person
+        .findByIdAndDelete(request.params.id)
+        .then(() => {
+            response.status(204).end()
+        })
+        .catch(error => next(error))
 })
 
 const unknownEndpoint = (request, response) => {
-    response.status(404).send({error: 'unknown endpoint'})
+    response.status(404).send({ error: 'unknown endpoint' })
 }
 app.use(unknownEndpoint)
 
-const errorHandler = (error, request, response, next) => {
+const errorHandler = (error, request, response) => {
     console.error(error.name, error.message)
 
     if (error.name === 'CastError') {
