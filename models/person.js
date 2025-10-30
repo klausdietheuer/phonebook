@@ -15,14 +15,13 @@ mongoose.connect(url)
 const personSchema = new mongoose.Schema({
     name: {
         type: String,
-        minLength: [3, 'Name muss mindestens 3 Zeichen lang sein.'],
+        minlength: [3, 'Name muss mindestens 3 Zeichen lang sein.'],
         required: [true, 'Name ist erforderlich.'],
     },
     number: {
         type: String,
         validate: {
             validator: function (v) {
-                // 🔹 Muster:
                 // 2–3 Ziffern, dann '-', dann 5+ Ziffern
                 return /^\d{2,3}-\d+$/.test(v)
             },
